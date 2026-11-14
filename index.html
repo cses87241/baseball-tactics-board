@@ -137,32 +137,42 @@ button:hover { background: #777; }
     <svg width="100%" height="100%" viewBox="0 0 900 680" preserveAspectRatio="xMidYMid meet" style="position:absolute; top:0; left:0; pointer-events:none;">
       <!-- Outfield grass -->
       <rect width="900" height="680" fill="#228B22"/>
-      <!-- Foul lines -->
-      <line x1="450" y1="580" x2="80" y2="180" stroke="#ffffff" stroke-width="4"/>
-      <line x1="450" y1="580" x2="820" y2="180" stroke="#ffffff" stroke-width="4"/>
-      <!-- Outfield fence (curved) -->
-      <path d="M80,180 Q450,40 820,180" stroke="#ffffff" fill="none" stroke-width="5"/>
-      <!-- Infield dirt (diamond-ish with arc) -->
-      <path d="M450,580 L620,410 L450,240 L280,410 Z" fill="#C19A6B"/>
-      <path d="M280,410 Q450,200 620,410" fill="#C19A6B" stroke="#C19A6B"/>
-      <!-- Grass cut in infield (optional) -->
-      <path d="M450,520 L550,420 L450,320 L350,420 Z" fill="#228B22"/>
-      <!-- Bases -->
-      <polygon points="450,240 465,255 450,270 435,255" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 2B -->
-      <polygon points="620,410 635,425 620,440 605,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 1B -->
-      <polygon points="280,410 295,425 280,440 265,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 3B -->
-      <polygon points="450,580 465,595 450,610 435,595" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- Home -->
-      <!-- Pitcher's mound -->
-      <circle cx="450" cy="410" r="32" fill="#D2B48C" stroke="#fff" stroke-width="2"/>
-      <circle cx="450" cy="410" r="6" fill="#ffffff"/>
-      <!-- Home plate area dirt -->
-      <circle cx="450" cy="580" r="45" fill="#C19A6B"/>
-      <!-- Batter boxes -->
-      <rect x="400" y="550" width="20" height="40" fill="none" stroke="#fff" stroke-width="2"/>
-      <rect x="480" y="550" width="20" height="40" fill="none" stroke="#fff" stroke-width="2"/>
-      <!-- On-deck circles -->
-      <circle cx="300" cy="620" r="18" fill="none" stroke="#fff" stroke-width="2"/>
-      <circle cx="600" cy="620" r="18" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- Foul lines extended -->
+      <line x1="450" y1="560" x2="80" y2="120" stroke="#ffffff" stroke-width="4"/>
+      <line x1="450" y1="560" x2="820" y2="120" stroke="#ffffff" stroke-width="4"/>
+      <!-- Outfield fence -->
+      <path d="M80,120 Q450,20 820,120" stroke="#ffffff" fill="none" stroke-width="5"/>
+      <!-- Infield dirt: square diamond -->
+      <polygon points="450,560 550,460 450,360 350,460" fill="#C19A6B"/>
+      <!-- Base paths -->
+      <line x1="450" y1="560" x2="550" y2="460" stroke="#ffffff" stroke-width="3"/>
+      <line x1="550" y1="460" x2="450" y2="360" stroke="#ffffff" stroke-width="3"/>
+      <line x1="450" y1="360" x2="350" y2="460" stroke="#ffffff" stroke-width="3"/>
+      <line x1="350" y1="460" x2="450" y2="560" stroke="#ffffff" stroke-width="3"/>
+      <!-- Bases (squares) -->
+      <rect x="542" y="452" width="16" height="16" fill="#ffffff" stroke="#333" transform="rotate(45 550 460)"/>
+      <rect x="442" y="352" width="16" height="16" fill="#ffffff" stroke="#333" transform="rotate(45 450 360)"/>
+      <rect x="342" y="452" width="16" height="16" fill="#ffffff" stroke="#333" transform="rotate(45 350 460)"/>
+      <!-- Home plate area: red mat like 樂樂棒 -->
+      <rect x="380" y="530" width="140" height="90" fill="#c0392b" stroke="#ffffff" stroke-width="4"/>
+      <line x1="380" y1="575" x2="520" y2="575" stroke="#ffffff" stroke-width="2"/>
+      <!-- Home plate pentagon -->
+      <polygon points="450,555 465,570 450,585 435,570 450,540" fill="#ffffff" stroke="#333" stroke-width="1.5"/>
+      <!-- Tee -->
+      <circle cx="450" cy="568" r="4" fill="#222"/>
+      <line x1="450" y1="568" x2="450" y2="548" stroke="#222" stroke-width="3"/>
+      <!-- Pitcher's area -->
+      <circle cx="450" cy="460" r="28" fill="#D2B48C" stroke="#fff" stroke-width="2"/>
+      <circle cx="450" cy="460" r="5" fill="#ffffff"/>
+      <!-- 5m dashed lines (不可折返線) from 1st, 2nd, 3rd -->
+      <line x1="520" y1="430" x2="535" y2="445" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4"/>
+      <line x1="515" y1="425" x2="540" y2="450" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4"/>
+      <line x1="420" y1="330" x2="405" y2="345" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4"/>
+      <line x1="425" y1="325" x2="400" y2="350" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4"/>
+      <line x1="380" y1="490" x2="365" y2="505" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4"/>
+      <line x1="385" y1="495" x2="360" y2="510" stroke="#ffffff" stroke-width="2" stroke-dasharray="6,4"/>
+      <!-- 5m line in front of home -->
+      <path d="M400,510 Q450,490 500,510" stroke="#ffffff" fill="none" stroke-width="2" stroke-dasharray="6,4"/>
     </svg>
   </div>
 </div>
@@ -217,7 +227,6 @@ function placeMarker(x, y, color) {
   field.appendChild(marker);
   makeDraggable(marker);
 
-  // 右鍵設定球員名稱
   marker.addEventListener('contextmenu', (ev) => {
     ev.preventDefault();
     const current = marker.dataset.name || '';
@@ -231,7 +240,6 @@ function placeMarker(x, y, color) {
     }
   });
 
-  // 雙擊刪除
   marker.addEventListener('dblclick', (ev) => {
     ev.preventDefault();
     marker.remove();
@@ -243,7 +251,7 @@ function makeDraggable(el) {
   let offsetX = 0, offsetY = 0;
 
   el.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0) return; // 只處理左鍵
+    if (e.button !== 0) return;
     isDragging = true;
     const rect = el.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
