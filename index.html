@@ -147,11 +147,19 @@ button:hover { background: #777; }
       <path d="M280,410 Q450,200 620,410" fill="#C19A6B" stroke="#C19A6B"/>
       <!-- Grass cut in infield (optional) -->
       <path d="M450,520 L550,420 L450,320 L350,420 Z" fill="#228B22"/>
-      <!-- Bases -->
-      <polygon points="450,240 465,255 450,270 435,255" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 2B -->
-      <polygon points="620,410 635,425 620,440 605,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 1B -->
-      <polygon points="280,410 295,425 280,440 265,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 3B -->
-      <polygon points="450,580 465,595 450,610 435,595" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- Home -->
+      <!-- Bases with white + orange blocks -->
+      <!-- 2B: white diamond + orange next to it -->
+      <polygon points="450,240 465,255 450,270 435,255" fill="#ffffff" stroke="#333" stroke-width="1"/>
+      <polygon points="450,270 465,285 450,300 435,285" fill="#e67e22" stroke="#333" stroke-width="1"/>
+      <!-- 1B: white + orange -->
+      <polygon points="620,410 635,425 620,440 605,425" fill="#ffffff" stroke="#333" stroke-width="1"/>
+      <polygon points="620,440 635,455 620,470 605,455" fill="#e67e22" stroke="#333" stroke-width="1"/>
+      <!-- 3B: white + orange -->
+      <polygon points="280,410 295,425 280,440 265,425" fill="#ffffff" stroke="#333" stroke-width="1"/>
+      <polygon points="280,440 295,455 280,470 265,455" fill="#e67e22" stroke="#333" stroke-width="1"/>
+      <!-- Home plate: orange square + white plate (like image) -->
+      <rect x="428" y="568" width="44" height="44" fill="#e67e22" stroke="#ffffff" stroke-width="2"/>
+      <polygon points="450,572 468,590 450,608 432,590" fill="#ffffff" stroke="#333" stroke-width="1"/>
       <!-- Pitcher's mound -->
       <circle cx="450" cy="410" r="32" fill="#D2B48C" stroke="#fff" stroke-width="2"/>
       <circle cx="450" cy="410" r="6" fill="#ffffff"/>
