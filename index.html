@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>棒球戰術板 | Baseball Tactics Board</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+  background: #4a5a3a;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+#header {
+  background: #2c3e2c;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+#board-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: auto;
+  background: #5a6a4a;
+}
+#field {
+  position: relative;
+  width: 900px;
+  height: 680px;
+  background: #228B22;
+  border: 4px solid #1a3a1a;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+}
+.marker {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid #222;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 10;
+}
+.marker:active { cursor: grabbing; }
+#toolbar {
+  background: #2c2c2c;
+  color: #eee;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 3px solid #555;
+}
+.color-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 1px 1px 1px #000;
+  transition: transform 0.1s;
+}
+.color-btn:hover { transform: scale(1.1); }
+.color-btn.selected {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px #000;
+}
+button {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #555;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+button:hover { background: #777; }
+#hint {
+  font-size: 13px;
+  color: #aaa;
+  margin-left: auto;
+}
+@media (max-width: 900px) {
+  #field { width: 100%; height: auto; aspect-ratio: 900/680; }
+  #hint { margin-left: 0; width: 100%; text-align: center; }
+}
+</style>
+</head>
+<body>
+<div id="header">棒球戰術板 Baseball Tactics Board</div>
+<div id="board-container">
+  <div id="field">
+    <svg width="100%" height="100%" viewBox="0 0 900 680" preserveAspectRatio="xMidYMid meet" style="position:absolute; top:0; left:0; pointer-events:none;">
+      <!-- Outfield grass -->
+      <rect width="900" height="680" fill="#228B22"/>
+      <!-- Foul lines -->
+      <line x1="450" y1="580" x2="80" y2="180" stroke="#ffffff" stroke-width="4"/>
+      <line x1="450" y1="580" x2="820" y2="180" stroke="#ffffff" stroke-width="4"/>
+      <!-- Outfield fence (curved) -->
+      <path d="M80,180 Q450,40 820,180" stroke="#ffffff" fill="none" stroke-width="5"/>
+      <!-- Infield dirt (diamond-ish with arc) -->
+      <path d="M450,580 L620,410 L450,240 L280,410 Z" fill="#C19A6B"/>
+      <path d="M280,410 Q450,200 620,410" fill="#C19A6B" stroke="#C19A6B"/>
+      <!-- Grass cut in infield (optional) -->
+      <path d="M450,520 L550,420 L450,320 L350,420 Z" fill="#228B22"/>
+      <!-- Bases -->
+      <polygon points="450,240 465,255 450,270 435,255" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 2B -->
+      <polygon points="620,410 635,425 620,440 605,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 1B -->
+      <polygon points="280,410 295,425 280,440 265,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 3B -->
+      <polygon points="450,580 465,595 450,610 435,595" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- Home -->
+      <!-- Pitcher's mound -->
+      <circle cx="450" cy="410" r="32" fill="#D2B48C" stroke="#fff" stroke-width="2"/>
+      <circle cx="450" cy="410" r="6" fill="#ffffff"/>
+      <!-- Home plate area dirt -->
+      <circle cx="450" cy="580" r="45" fill="#C19A6B"/>
+      <!-- Batter boxes -->
+      <rect x="400" y="550" width="20" height="40" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="480" y="550" width="20" height="40" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- On-deck circles -->
+      <circle cx="300" cy="620" r="18" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="600" cy="620" r="18" fill="none" stroke="#fff" stroke-width="2"/>
+    </svg>
+  </div>
+</div>
+<div id="toolbar">
+  <span style="font-weight:bold;">選擇顏色：</span>
+  <div class="color-btn selected" style="background:#8B0000" data-color="#8B0000">1</div>
+  <div class="color-btn" style="background:#FFD700" data-color="#FFD700">2</div>
+  <div class="color-btn" style="background:#800080" data-color="#800080">3</div>
+  <div class="color-btn" style="background:#32CD32" data-color="#32CD32">4</div>
+  <div class="color-btn" style="background:#0000CD" data-color="#0000CD">5</div>
+  <div class="color-btn" style="background:#FF0000" data-color="#FF0000">6</div>
+  <div class="color-btn" style="background:#FF8C00" data-color="#FF8C00">7</div>
+  <div class="color-btn" style="background:#00BFFF" data-color="#00BFFF">8</div>
+  <div class="color-btn" style="background:#FFFFFF; color:#000; text-shadow:none;" data-color="#FFFFFF">9</div>
+  <div class="color-btn" style="background:#000000" data-color="#000000">10</div>
+  <button id="clear">清除全部標記</button>
+  <div id="hint">點擊場地放置標記　|　拖曳移動　|　右鍵點擊刪除單一標記</div>
+</div>
+<script>
+const field = document.getElementById('field');
+let selectedColor = '#8B0000';
+let markerCount = 0;
+
+document.querySelectorAll('.color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedColor = btn.dataset.color;
+  });
+});
+
+field.addEventListener('click', (e) => {
+  if (e.target.closest('.marker')) return;
+  const rect = field.getBoundingClientRect();
+  const x = e.clientX - rect.left - 18;
+  const y = e.clientY - rect.top - 18;
+  placeMarker(x, y, selectedColor);
+});
+
+function placeMarker(x, y, color) {
+  markerCount++;
+  const marker = document.createElement('div');
+  marker.className = 'marker';
+  marker.style.background = color;
+  marker.style.left = Math.max(0, x) + 'px';
+  marker.style.top = Math.max(0, y) + 'px';
+  marker.textContent = markerCount;
+  marker.dataset.color = color;
+  field.appendChild(marker);
+  makeDraggable(marker);
+  marker.addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    marker.remove();
+  });
+}
+
+function makeDraggable(el) {
+  let isDragging = false;
+  let offsetX = 0, offsetY = 0;
+
+  el.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    const rect = el.getBoundingClientRect();
+    const fieldRect = field.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    el.setPointerCapture(e.pointerId);
+    el.style.zIndex = 100;
+    e.stopPropagation();
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const fieldRect = field.getBoundingClientRect();
+    let x = e.clientX - fieldRect.left - offsetX;
+    let y = e.clientY - fieldRect.top - offsetY;
+    x = Math.max(0, Math.min(x, field.offsetWidth - 36));
+    y = Math.max(0, Math.min(y, field.offsetHeight - 36));
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+  });
+
+  el.addEventListener('pointerup', (e) => {
+    isDragging = false;
+    el.releasePointerCapture(e.pointerId);
+    el.style.zIndex = 10;
+  });
+}
+
+document.getElementById('clear').addEventListener('click', () => {
+  document.querySelectorAll('.marker').forEach(m => m.remove());
+  markerCount = 0;
+});
+</script>
+</body>
+</html>
