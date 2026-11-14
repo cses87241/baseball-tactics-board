@@ -43,11 +43,16 @@ body {
 }
 .marker {
   position: absolute;
+  cursor: grab;
+  user-select: none;
+  z-index: 10;
+}
+.marker:active { cursor: grabbing; }
+.marker .circle {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   border: 3px solid #222;
-  cursor: grab;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,11 +60,24 @@ body {
   font-size: 14px;
   color: #fff;
   text-shadow: 1px 1px 2px #000;
-  user-select: none;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  z-index: 10;
 }
-.marker:active { cursor: grabbing; }
+.marker .pname {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  text-align: center;
+  display: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
 #toolbar {
   background: #2c2c2c;
   color: #eee;
@@ -160,7 +178,7 @@ button:hover { background: #777; }
   <div class="color-btn" style="background:#FFFFFF; color:#000; text-shadow:none;" data-color="#FFFFFF">9</div>
   <div class="color-btn" style="background:#000000" data-color="#000000">10</div>
   <button id="clear">清除全部標記</button>
-  <div id="hint">點擊場地放置標記　|　拖曳移動　|　右鍵點擊刪除單一標記</div>
+  <div id="hint">點擊放置　|　拖曳移動　|　右鍵設定球員名稱　|　雙擊刪除</div>
 </div>
 <script>
 const field = document.getElementById('field');
@@ -187,14 +205,33 @@ function placeMarker(x, y, color) {
   markerCount++;
   const marker = document.createElement('div');
   marker.className = 'marker';
-  marker.style.background = color;
   marker.style.left = Math.max(0, x) + 'px';
   marker.style.top = Math.max(0, y) + 'px';
-  marker.textContent = markerCount;
+  marker.dataset.num = markerCount;
   marker.dataset.color = color;
+  marker.dataset.name = '';
+  const textColor = (color === '#FFFFFF' || color === '#FFD700' || color === '#32CD32') ? '#000' : '#fff';
+  const textShadow = (textColor === '#000') ? 'none' : '1px 1px 2px #000';
+  marker.innerHTML = `<div class="circle" style="background:${color}; color:${textColor}; text-shadow:${textShadow}">${markerCount}</div><div class="pname"></div>`;
   field.appendChild(marker);
   makeDraggable(marker);
+
+  // 右鍵設定球員名稱
   marker.addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    const current = marker.dataset.name || '';
+    const name = prompt('請輸入球員名稱：', current);
+    if (name !== null) {
+      const trimmed = name.trim();
+      marker.dataset.name = trimmed;
+      const pname = marker.querySelector('.pname');
+      pname.textContent = trimmed;
+      pname.style.display = trimmed ? 'block' : 'none';
+    }
+  });
+
+  // 雙擊刪除
+  marker.addEventListener('dblclick', (ev) => {
     ev.preventDefault();
     marker.remove();
   });
@@ -205,9 +242,9 @@ function makeDraggable(el) {
   let offsetX = 0, offsetY = 0;
 
   el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return; // 只處理左鍵
     isDragging = true;
     const rect = el.getBoundingClientRect();
-    const fieldRect = field.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
     el.setPointerCapture(e.pointerId);
@@ -228,7 +265,7 @@ function makeDraggable(el) {
 
   el.addEventListener('pointerup', (e) => {
     isDragging = false;
-    el.releasePointerCapture(e.pointerId);
+    try { el.releasePointerCapture(e.pointerId); } catch(err) {}
     el.style.zIndex = 10;
   });
 }
