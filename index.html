@@ -147,21 +147,16 @@ button:hover { background: #777; }
       <path d="M280,410 Q450,200 620,410" fill="#C19A6B" stroke="#C19A6B"/>
       <!-- Grass cut in infield (optional) -->
       <path d="M450,520 L550,420 L450,320 L350,420 Z" fill="#228B22"/>
-      <!-- Bases: dual-color adjacent diamonds (white + orange sharing edge) -->
-      <!-- 2B: white left half, orange right half -->
-      <polygon points="450,235 465,250 450,265 435,250" fill="#ffffff" stroke="#333" stroke-width="1"/>
-      <polygon points="450,235 465,250 450,265 435,250" fill="none"/>
-      <polygon points="450,250 465,265 450,280 435,265" fill="#e67e22" stroke="#333" stroke-width="1"/>
-      <!-- Better adjacent: split diamond -->
-      <!-- 2B -->
-      <polygon points="435,250 450,235 465,250 450,265" fill="#ffffff" stroke="#333" stroke-width="1"/>
-      <polygon points="435,250 450,265 465,250 450,280" fill="#e67e22" stroke="#333" stroke-width="1"/>
-      <!-- 1B -->
-      <polygon points="605,415 620,400 635,415 620,430" fill="#ffffff" stroke="#333" stroke-width="1"/>
-      <polygon points="605,415 620,430 635,415 620,445" fill="#e67e22" stroke="#333" stroke-width="1"/>
-      <!-- 3B -->
-      <polygon points="265,415 280,400 295,415 280,430" fill="#ffffff" stroke="#333" stroke-width="1"/>
-      <polygon points="265,415 280,430 295,415 280,445" fill="#e67e22" stroke="#333" stroke-width="1"/>
+      <!-- Bases: two adjacent squares -->
+      <!-- 1B: closer to 1st (outer/right) = orange, toward 2nd (left/up) = white -->
+      <rect x="605" y="400" width="18" height="18" fill="#ffffff" stroke="#333" stroke-width="1" transform="rotate(45 614 409)"/>
+      <rect x="620" y="415" width="18" height="18" fill="#e67e22" stroke="#333" stroke-width="1" transform="rotate(45 629 424)"/>
+      <!-- 2B: closer to 2nd toward 3rd = orange, toward 3rd = white -->
+      <rect x="435" y="230" width="18" height="18" fill="#e67e22" stroke="#333" stroke-width="1" transform="rotate(45 444 239)"/>
+      <rect x="450" y="245" width="18" height="18" fill="#ffffff" stroke="#333" stroke-width="1" transform="rotate(45 459 254)"/>
+      <!-- 3B: closer to 3rd (outer/left) = orange, toward home (right/down) = white -->
+      <rect x="265" y="400" width="18" height="18" fill="#e67e22" stroke="#333" stroke-width="1" transform="rotate(45 274 409)"/>
+      <rect x="280" y="415" width="18" height="18" fill="#ffffff" stroke="#333" stroke-width="1" transform="rotate(45 289 424)"/>
       <!-- Home plate: orange square + white plate -->
       <rect x="428" y="568" width="44" height="44" fill="#e67e22" stroke="#ffffff" stroke-width="2"/>
       <polygon points="450,572 468,590 450,608 432,590" fill="#ffffff" stroke="#333" stroke-width="1"/>
