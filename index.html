@@ -135,52 +135,29 @@ button:hover { background: #777; }
 <div id="board-container">
   <div id="field">
     <svg width="100%" height="100%" viewBox="0 0 900 680" preserveAspectRatio="xMidYMid meet" style="position:absolute; top:0; left:0; pointer-events:none;">
-      <!-- Outfield grass -->
-      <rect width="900" height="680" fill="#32a852"/>
-      <!-- Foul lines aligned through bases, extended as arcs outward -->
-      <line x1="450" y1="590" x2="610" y2="430" stroke="#ffffff" stroke-width="4"/>
-      <line x1="610" y1="430" x2="820" y2="180" stroke="#ffffff" stroke-width="4"/>
-      <line x1="450" y1="590" x2="290" y2="430" stroke="#ffffff" stroke-width="4"/>
-      <line x1="290" y1="430" x2="80" y2="180" stroke="#ffffff" stroke-width="4"/>
-      <!-- Outfield fence as pure arc -->
-      <path d="M80,180 Q450,30 820,180" stroke="#ffffff" fill="none" stroke-width="6"/>
-      <!-- Additional arc lines in outfield -->
-      <path d="M150,280 Q450,100 750,280" stroke="#ffffff" fill="none" stroke-width="2" opacity="0.6"/>
-      <path d="M200,220 Q450,80 700,220" stroke="#ffffff" fill="none" stroke-width="2" opacity="0.4"/>
-      <!-- Infield dirt square diamond (orange) -->
-      <polygon points="450,590 610,430 450,270 290,430" fill="#e67e22"/>
-      <!-- Base paths white -->
-      <line x1="450" y1="590" x2="610" y2="430" stroke="#ffffff" stroke-width="3"/>
-      <line x1="610" y1="430" x2="450" y2="270" stroke="#ffffff" stroke-width="3"/>
-      <line x1="450" y1="270" x2="290" y2="430" stroke="#ffffff" stroke-width="3"/>
-      <line x1="290" y1="430" x2="450" y2="590" stroke="#ffffff" stroke-width="3"/>
-      <!-- Dual-color bases (white/orange diamond halves) -->
-      <!-- 1st base -->
-      <polygon points="610,430 625,415 610,400 595,415" fill="#ffffff"/>
-      <polygon points="610,430 625,445 610,460 595,445" fill="#e67e22"/>
-      <!-- 2nd base -->
-      <polygon points="450,270 465,255 450,240 435,255" fill="#ffffff"/>
-      <polygon points="450,270 465,285 450,300 435,285" fill="#e67e22"/>
-      <!-- 3rd base -->
-      <polygon points="290,430 305,415 290,400 275,415" fill="#ffffff"/>
-      <polygon points="290,430 305,445 290,460 275,445" fill="#e67e22"/>
-      <!-- Home plate area: small red square -->
-      <rect x="438" y="578" width="24" height="24" fill="#c0392b" stroke="#ffffff" stroke-width="2"/>
-      <polygon points="450,582 458,590 450,598 442,590" fill="#ffffff"/>
-      <!-- Pitcher's rubber -->
-      <rect x="438" y="428" width="24" height="6" fill="#ffffff"/>
-      <!-- 5m dashed circles around bases -->
-      <circle cx="610" cy="430" r="55" fill="none" stroke="#3498db" stroke-width="2" stroke-dasharray="8,5"/>
-      <circle cx="450" cy="270" r="55" fill="none" stroke="#3498db" stroke-width="2" stroke-dasharray="8,5"/>
-      <circle cx="290" cy="430" r="55" fill="none" stroke="#3498db" stroke-width="2" stroke-dasharray="8,5"/>
-      <!-- 5m arc in front of home -->
-      <path d="M380,540 Q450,500 520,540" stroke="#3498db" fill="none" stroke-width="2" stroke-dasharray="8,5"/>
-      <!-- Coach boxes -->
-      <rect x="200" y="500" width="40" height="60" fill="none" stroke="#ffffff" stroke-width="2"/>
-      <rect x="660" y="500" width="40" height="60" fill="none" stroke="#ffffff" stroke-width="2"/>
-      <!-- On-deck circles -->
-      <circle cx="220" cy="640" r="20" fill="none" stroke="#ffffff" stroke-width="2"/>
-      <circle cx="680" cy="640" r="20" fill="none" stroke="#ffffff" stroke-width="2"/>
+      <!-- Fan-shaped outfield grass -->
+      <path d="M450,620 L80,200 A370,370 0 0,1 820,200 Z" fill="#2e8b57"/>
+      <!-- Brown outer fence/border -->
+      <path d="M80,200 A370,370 0 0,1 820,200" stroke="#c19a6b" fill="none" stroke-width="14"/>
+      <!-- Dirt infield diamond -->
+      <polygon points="450,620 580,490 450,360 320,490" fill="#c19a6b"/>
+      <!-- Foul lines (white) -->
+      <line x1="450" y1="620" x2="80" y2="200" stroke="#ffffff" stroke-width="4"/>
+      <line x1="450" y1="620" x2="820" y2="200" stroke="#ffffff" stroke-width="4"/>
+      <!-- Base paths -->
+      <line x1="450" y1="620" x2="580" y2="490" stroke="#ffffff" stroke-width="3"/>
+      <line x1="580" y1="490" x2="450" y2="360" stroke="#ffffff" stroke-width="3"/>
+      <line x1="450" y1="360" x2="320" y2="490" stroke="#ffffff" stroke-width="3"/>
+      <line x1="320" y1="490" x2="450" y2="620" stroke="#ffffff" stroke-width="3"/>
+      <!-- Bases (white diamonds) -->
+      <polygon points="580,490 592,478 580,466 568,478" fill="#ffffff"/>
+      <polygon points="450,360 462,348 450,336 438,348" fill="#ffffff"/>
+      <polygon points="320,490 332,478 320,466 308,478" fill="#ffffff"/>
+      <!-- Home plate -->
+      <polygon points="450,610 462,622 450,634 438,622" fill="#ffffff"/>
+      <!-- Pitcher's mound -->
+      <circle cx="450" cy="490" r="22" fill="#d2b48c" stroke="#ffffff" stroke-width="2"/>
+      <rect x="442" y="488" width="16" height="4" fill="#ffffff"/>
     </svg>
   </div>
 </div>
