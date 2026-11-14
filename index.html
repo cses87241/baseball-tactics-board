@@ -135,29 +135,34 @@ button:hover { background: #777; }
 <div id="board-container">
   <div id="field">
     <svg width="100%" height="100%" viewBox="0 0 900 680" preserveAspectRatio="xMidYMid meet" style="position:absolute; top:0; left:0; pointer-events:none;">
-      <!-- Fan-shaped outfield grass -->
-      <path d="M450,620 L80,200 A370,370 0 0,1 820,200 Z" fill="#2e8b57"/>
-      <!-- Brown outer fence/border -->
-      <path d="M80,200 A370,370 0 0,1 820,200" stroke="#c19a6b" fill="none" stroke-width="14"/>
-      <!-- Dirt infield diamond -->
-      <polygon points="450,620 580,490 450,360 320,490" fill="#c19a6b"/>
-      <!-- Foul lines (white) -->
-      <line x1="450" y1="620" x2="80" y2="200" stroke="#ffffff" stroke-width="4"/>
-      <line x1="450" y1="620" x2="820" y2="200" stroke="#ffffff" stroke-width="4"/>
-      <!-- Base paths -->
-      <line x1="450" y1="620" x2="580" y2="490" stroke="#ffffff" stroke-width="3"/>
-      <line x1="580" y1="490" x2="450" y2="360" stroke="#ffffff" stroke-width="3"/>
-      <line x1="450" y1="360" x2="320" y2="490" stroke="#ffffff" stroke-width="3"/>
-      <line x1="320" y1="490" x2="450" y2="620" stroke="#ffffff" stroke-width="3"/>
-      <!-- Bases (white diamonds) -->
-      <polygon points="580,490 592,478 580,466 568,478" fill="#ffffff"/>
-      <polygon points="450,360 462,348 450,336 438,348" fill="#ffffff"/>
-      <polygon points="320,490 332,478 320,466 308,478" fill="#ffffff"/>
-      <!-- Home plate -->
-      <polygon points="450,610 462,622 450,634 438,622" fill="#ffffff"/>
+      <!-- Outfield grass -->
+      <rect width="900" height="680" fill="#228B22"/>
+      <!-- Foul lines -->
+      <line x1="450" y1="580" x2="80" y2="180" stroke="#ffffff" stroke-width="4"/>
+      <line x1="450" y1="580" x2="820" y2="180" stroke="#ffffff" stroke-width="4"/>
+      <!-- Outfield fence (curved) -->
+      <path d="M80,180 Q450,40 820,180" stroke="#ffffff" fill="none" stroke-width="5"/>
+      <!-- Infield dirt (diamond-ish with arc) -->
+      <path d="M450,580 L620,410 L450,240 L280,410 Z" fill="#C19A6B"/>
+      <path d="M280,410 Q450,200 620,410" fill="#C19A6B" stroke="#C19A6B"/>
+      <!-- Grass cut in infield (optional) -->
+      <path d="M450,520 L550,420 L450,320 L350,420 Z" fill="#228B22"/>
+      <!-- Bases -->
+      <polygon points="450,240 465,255 450,270 435,255" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 2B -->
+      <polygon points="620,410 635,425 620,440 605,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 1B -->
+      <polygon points="280,410 295,425 280,440 265,425" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- 3B -->
+      <polygon points="450,580 465,595 450,610 435,595" fill="#ffffff" stroke="#333" stroke-width="1"/> <!-- Home -->
       <!-- Pitcher's mound -->
-      <circle cx="450" cy="490" r="22" fill="#d2b48c" stroke="#ffffff" stroke-width="2"/>
-      <rect x="442" y="488" width="16" height="4" fill="#ffffff"/>
+      <circle cx="450" cy="410" r="32" fill="#D2B48C" stroke="#fff" stroke-width="2"/>
+      <circle cx="450" cy="410" r="6" fill="#ffffff"/>
+      <!-- Home plate area dirt -->
+      <circle cx="450" cy="580" r="45" fill="#C19A6B"/>
+      <!-- Batter boxes -->
+      <rect x="400" y="550" width="20" height="40" fill="none" stroke="#fff" stroke-width="2"/>
+      <rect x="480" y="550" width="20" height="40" fill="none" stroke="#fff" stroke-width="2"/>
+      <!-- On-deck circles -->
+      <circle cx="300" cy="620" r="18" fill="none" stroke="#fff" stroke-width="2"/>
+      <circle cx="600" cy="620" r="18" fill="none" stroke="#fff" stroke-width="2"/>
     </svg>
   </div>
 </div>
@@ -212,6 +217,7 @@ function placeMarker(x, y, color) {
   field.appendChild(marker);
   makeDraggable(marker);
 
+  // 右鍵設定球員名稱
   marker.addEventListener('contextmenu', (ev) => {
     ev.preventDefault();
     const current = marker.dataset.name || '';
@@ -225,6 +231,7 @@ function placeMarker(x, y, color) {
     }
   });
 
+  // 雙擊刪除
   marker.addEventListener('dblclick', (ev) => {
     ev.preventDefault();
     marker.remove();
@@ -236,7 +243,7 @@ function makeDraggable(el) {
   let offsetX = 0, offsetY = 0;
 
   el.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0) return; // 只處理左鍵
     isDragging = true;
     const rect = el.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
