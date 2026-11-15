@@ -194,15 +194,18 @@ button:hover { background: #777; }
   <div class="color-btn" style="background:#FFFFFF; color:#000; text-shadow:none;" data-type="color" data-color="#FFFFFF">9</div>
   <div class="color-btn" style="background:#000000" data-type="color" data-color="#000000">10</div>
   <div class="tool-btn" data-type="cross" title="紅色打叉">✖</div>
-  <div class="tool-btn" data-type="arrow" title="黑色箭頭">→</div>
+  <div class="tool-btn" data-type="arrow" title="黑色箭頭（拖曳畫）">→</div>
   <button id="clear">清除全部標記</button>
-  <div id="hint">點擊放置　|　拖曳移動　|　右鍵設定名稱　|　雙擊刪除</div>
+  <div id="hint">點擊放置　|　箭頭拖曳畫線　|　拖曳移動　|　右鍵設定名稱　|　雙擊刪除</div>
 </div>
 <script>
 const field = document.getElementById('field');
 let selectedType = 'color';
 let selectedColor = '#8B0000';
 let markerCount = 0;
+let isDrawingArrow = false;
+let arrowStart = null;
+let tempArrow = null;
 
 document.querySelectorAll('.color-btn, .tool-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -213,19 +216,87 @@ document.querySelectorAll('.color-btn, .tool-btn').forEach(btn => {
   });
 });
 
-field.addEventListener('click', (e) => {
+field.addEventListener('pointerdown', (e) => {
+  if (e.button !== 0) return;
   if (e.target.closest('.marker') || e.target.closest('.tool-item')) return;
   const rect = field.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
+
   if (selectedType === 'color') {
     placeMarker(x - 18, y - 18, selectedColor);
   } else if (selectedType === 'cross') {
     placeCross(x - 16, y - 16);
   } else if (selectedType === 'arrow') {
-    placeArrow(x - 30, y - 8);
+    isDrawingArrow = true;
+    arrowStart = { x, y };
+    tempArrow = document.createElement('div');
+    tempArrow.className = 'tool-item';
+    tempArrow.style.pointerEvents = 'none';
+    tempArrow.style.zIndex = '20';
+    field.appendChild(tempArrow);
+    updateTempArrow(x, y);
+    e.preventDefault();
   }
 });
+
+field.addEventListener('pointermove', (e) => {
+  if (!isDrawingArrow || !arrowStart) return;
+  const rect = field.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  updateTempArrow(x, y);
+});
+
+field.addEventListener('pointerup', (e) => {
+  if (!isDrawingArrow || !arrowStart) return;
+  const rect = field.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  finalizeArrow(arrowStart.x, arrowStart.y, x, y);
+  if (tempArrow) tempArrow.remove();
+  isDrawingArrow = false;
+  arrowStart = null;
+  tempArrow = null;
+});
+
+function updateTempArrow(endX, endY) {
+  if (!tempArrow || !arrowStart) return;
+  const dx = endX - arrowStart.x;
+  const dy = endY - arrowStart.y;
+  const length = Math.hypot(dx, dy);
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  tempArrow.style.left = arrowStart.x + 'px';
+  tempArrow.style.top = (arrowStart.y - 4) + 'px';
+  tempArrow.style.width = length + 'px';
+  tempArrow.style.height = '8px';
+  tempArrow.style.transformOrigin = '0 50%';
+  tempArrow.style.transform = `rotate(${angle}deg)`;
+  tempArrow.innerHTML = `<svg width="${length}" height="8" viewBox="0 0 ${length} 8"><line x1="0" y1="4" x2="${length-10}" y2="4" stroke="#000" stroke-width="3"/><polygon points="${length-10},0 ${length},4 ${length-10},8" fill="#000"/></svg>`;
+}
+
+function finalizeArrow(x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const length = Math.hypot(dx, dy);
+  if (length < 10) return;
+  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+  const item = document.createElement('div');
+  item.className = 'tool-item';
+  item.style.left = x1 + 'px';
+  item.style.top = (y1 - 4) + 'px';
+  item.style.width = length + 'px';
+  item.style.height = '8px';
+  item.style.transformOrigin = '0 50%';
+  item.style.transform = `rotate(${angle}deg)`;
+  item.innerHTML = `<svg width="${length}" height="8" viewBox="0 0 ${length} 8"><line x1="0" y1="4" x2="${length-10}" y2="4" stroke="#000" stroke-width="3"/><polygon points="${length-10},0 ${length},4 ${length-10},8" fill="#000"/></svg>`;
+  field.appendChild(item);
+  makeDraggable(item);
+  item.addEventListener('dblclick', (ev) => {
+    ev.preventDefault();
+    item.remove();
+  });
+}
 
 function placeMarker(x, y, color) {
   markerCount++;
@@ -265,20 +336,6 @@ function placeCross(x, y) {
   item.style.left = Math.max(0, x) + 'px';
   item.style.top = Math.max(0, y) + 'px';
   item.innerHTML = `<div style="width:32px;height:32px;color:#e74c3c;font-size:32px;font-weight:bold;line-height:1;text-shadow:1px 1px 2px #000;">✖</div>`;
-  field.appendChild(item);
-  makeDraggable(item);
-  item.addEventListener('dblclick', (ev) => {
-    ev.preventDefault();
-    item.remove();
-  });
-}
-
-function placeArrow(x, y) {
-  const item = document.createElement('div');
-  item.className = 'tool-item';
-  item.style.left = Math.max(0, x) + 'px';
-  item.style.top = Math.max(0, y) + 'px';
-  item.innerHTML = `<svg width="60" height="16" viewBox="0 0 60 16"><line x1="0" y1="8" x2="50" y2="8" stroke="#000" stroke-width="3"/><polygon points="50,2 60,8 50,14" fill="#000"/></svg>`;
   field.appendChild(item);
   makeDraggable(item);
   item.addEventListener('dblclick', (ev) => {
