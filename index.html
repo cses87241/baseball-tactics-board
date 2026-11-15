@@ -195,6 +195,7 @@ button:hover { background: #777; }
   <div class="color-btn" style="background:#000000" data-type="color" data-color="#000000">10</div>
   <div class="tool-btn" data-type="cross" title="紅色打叉">✖</div>
   <div class="tool-btn" data-type="arrow" title="黑色箭頭（拖曳畫）">→</div>
+  <div class="tool-btn" data-type="triangle" title="紅色三角形跑塁員">▲</div>
   <button id="clear">清除全部標記</button>
   <div id="hint">點擊放置　|　箭頭拖曳畫線　|　拖曳移動　|　右鍵設定名稱　|　雙擊刪除</div>
 </div>
@@ -227,6 +228,8 @@ field.addEventListener('pointerdown', (e) => {
     placeMarker(x - 18, y - 18, selectedColor);
   } else if (selectedType === 'cross') {
     placeCross(x - 16, y - 16);
+  } else if (selectedType === 'triangle') {
+    placeTriangle(x - 16, y - 16);
   } else if (selectedType === 'arrow') {
     isDrawingArrow = true;
     arrowStart = { x, y };
@@ -336,6 +339,20 @@ function placeCross(x, y) {
   item.style.left = Math.max(0, x) + 'px';
   item.style.top = Math.max(0, y) + 'px';
   item.innerHTML = `<div style="width:32px;height:32px;color:#e74c3c;font-size:32px;font-weight:bold;line-height:1;text-shadow:1px 1px 2px #000;">✖</div>`;
+  field.appendChild(item);
+  makeDraggable(item);
+  item.addEventListener('dblclick', (ev) => {
+    ev.preventDefault();
+    item.remove();
+  });
+}
+
+function placeTriangle(x, y) {
+  const item = document.createElement('div');
+  item.className = 'tool-item';
+  item.style.left = Math.max(0, x) + 'px';
+  item.style.top = Math.max(0, y) + 'px';
+  item.innerHTML = `<div style="width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:24px solid #e74c3c;filter:drop-shadow(1px 1px 2px #000);"></div>`;
   field.appendChild(item);
   makeDraggable(item);
   item.addEventListener('dblclick', (ev) => {
