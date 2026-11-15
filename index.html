@@ -79,6 +79,13 @@ body {
   display: none;
   box-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
+.tool-item {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  z-index: 10;
+}
+.tool-item:active { cursor: grabbing; }
 #toolbar {
   background: #2c2c2c;
   color: #eee;
@@ -89,7 +96,7 @@ body {
   flex-wrap: wrap;
   border-top: 3px solid #555;
 }
-.color-btn {
+.color-btn, .tool-btn {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -103,9 +110,11 @@ body {
   color: #fff;
   text-shadow: 1px 1px 1px #000;
   transition: transform 0.1s;
+  background: #444;
 }
-.color-btn:hover { transform: scale(1.1); }
-.color-btn.selected {
+.tool-btn { border-radius: 6px; font-size: 20px; }
+.color-btn:hover, .tool-btn:hover { transform: scale(1.1); }
+.color-btn.selected, .tool-btn.selected {
   border-color: #fff;
   box-shadow: 0 0 0 2px #000;
 }
@@ -137,27 +146,24 @@ button:hover { background: #777; }
     <svg width="100%" height="100%" viewBox="0 0 900 680" preserveAspectRatio="xMidYMid meet" style="position:absolute; top:0; left:0; pointer-events:none;">
       <!-- Outfield grass -->
       <rect width="900" height="680" fill="#228B22"/>
-      <!-- Foul lines: 1B side moved right, 3B side moved left -->
+      <!-- Foul lines -->
       <line x1="450" y1="580" x2="40" y2="160" stroke="#ffffff" stroke-width="4"/>
       <line x1="450" y1="580" x2="860" y2="160" stroke="#ffffff" stroke-width="4"/>
       <!-- Outfield fence (curved) -->
       <path d="M40,160 Q450,30 860,160" stroke="#ffffff" fill="none" stroke-width="5"/>
-      <!-- Infield dirt (diamond-ish with arc) -->
+      <!-- Infield dirt -->
       <path d="M450,580 L620,410 L450,240 L280,410 Z" fill="#C19A6B"/>
       <path d="M280,410 Q450,200 620,410" fill="#C19A6B" stroke="#C19A6B"/>
-      <!-- Grass cut in infield (optional) -->
+      <!-- Grass cut in infield -->
       <path d="M450,520 L550,420 L450,320 L350,420 Z" fill="#228B22"/>
-      <!-- Bases: two tightly adjacent squares -->
-      <!-- 1B -->
+      <!-- Bases -->
       <rect x="590" y="385" width="16" height="16" fill="#ffffff" stroke="#333" stroke-width="1" transform="rotate(45 598 393)"/>
       <rect x="602" y="397" width="16" height="16" fill="#e67e22" stroke="#333" stroke-width="1" transform="rotate(45 610 405)"/>
-      <!-- 2B: tightly connected, white lower-left of orange -->
       <rect x="448" y="234" width="16" height="16" fill="#e67e22" stroke="#333" stroke-width="1" transform="rotate(45 456 242)"/>
       <rect x="436" y="246" width="16" height="16" fill="#ffffff" stroke="#333" stroke-width="1" transform="rotate(45 444 254)"/>
-      <!-- 3B: both shifted right -->
       <rect x="278" y="402" width="16" height="16" fill="#e67e22" stroke="#333" stroke-width="1" transform="rotate(45 286 410)"/>
       <rect x="290" y="414" width="16" height="16" fill="#ffffff" stroke="#333" stroke-width="1" transform="rotate(45 298 422)"/>
-      <!-- Home plate: orange rectangle below, white rectangle, white pentagon on top -->
+      <!-- Home plate -->
       <rect x="430" y="590" width="40" height="28" fill="#e67e22" stroke="#333" stroke-width="1"/>
       <rect x="432" y="575" width="36" height="22" fill="#ffffff" stroke="#333" stroke-width="1"/>
       <polygon points="450,560 468,575 450,590 432,575 450,548" fill="#ffffff" stroke="#333" stroke-width="1"/>
@@ -176,39 +182,49 @@ button:hover { background: #777; }
   </div>
 </div>
 <div id="toolbar">
-  <span style="font-weight:bold;">選擇顏色：</span>
-  <div class="color-btn selected" style="background:#8B0000" data-color="#8B0000">1</div>
-  <div class="color-btn" style="background:#FFD700" data-color="#FFD700">2</div>
-  <div class="color-btn" style="background:#800080" data-color="#800080">3</div>
-  <div class="color-btn" style="background:#32CD32" data-color="#32CD32">4</div>
-  <div class="color-btn" style="background:#0000CD" data-color="#0000CD">5</div>
-  <div class="color-btn" style="background:#FF0000" data-color="#FF0000">6</div>
-  <div class="color-btn" style="background:#FF8C00" data-color="#FF8C00">7</div>
-  <div class="color-btn" style="background:#00BFFF" data-color="#00BFFF">8</div>
-  <div class="color-btn" style="background:#FFFFFF; color:#000; text-shadow:none;" data-color="#FFFFFF">9</div>
-  <div class="color-btn" style="background:#000000" data-color="#000000">10</div>
+  <span style="font-weight:bold;">選擇工具：</span>
+  <div class="color-btn selected" style="background:#8B0000" data-type="color" data-color="#8B0000">1</div>
+  <div class="color-btn" style="background:#FFD700" data-type="color" data-color="#FFD700">2</div>
+  <div class="color-btn" style="background:#800080" data-type="color" data-color="#800080">3</div>
+  <div class="color-btn" style="background:#32CD32" data-type="color" data-color="#32CD32">4</div>
+  <div class="color-btn" style="background:#0000CD" data-type="color" data-color="#0000CD">5</div>
+  <div class="color-btn" style="background:#FF0000" data-type="color" data-color="#FF0000">6</div>
+  <div class="color-btn" style="background:#FF8C00" data-type="color" data-color="#FF8C00">7</div>
+  <div class="color-btn" style="background:#00BFFF" data-type="color" data-color="#00BFFF">8</div>
+  <div class="color-btn" style="background:#FFFFFF; color:#000; text-shadow:none;" data-type="color" data-color="#FFFFFF">9</div>
+  <div class="color-btn" style="background:#000000" data-type="color" data-color="#000000">10</div>
+  <div class="tool-btn" data-type="cross" title="紅色打叉">✖</div>
+  <div class="tool-btn" data-type="arrow" title="黑色箭頭">→</div>
   <button id="clear">清除全部標記</button>
-  <div id="hint">點擊放置　|　拖曳移動　|　右鍵設定球員名稱　|　雙擊刪除</div>
+  <div id="hint">點擊放置　|　拖曳移動　|　右鍵設定名稱　|　雙擊刪除</div>
 </div>
 <script>
 const field = document.getElementById('field');
+let selectedType = 'color';
 let selectedColor = '#8B0000';
 let markerCount = 0;
 
-document.querySelectorAll('.color-btn').forEach(btn => {
+document.querySelectorAll('.color-btn, .tool-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.color-btn, .tool-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    selectedColor = btn.dataset.color;
+    selectedType = btn.dataset.type;
+    if (selectedType === 'color') selectedColor = btn.dataset.color;
   });
 });
 
 field.addEventListener('click', (e) => {
-  if (e.target.closest('.marker')) return;
+  if (e.target.closest('.marker') || e.target.closest('.tool-item')) return;
   const rect = field.getBoundingClientRect();
-  const x = e.clientX - rect.left - 18;
-  const y = e.clientY - rect.top - 18;
-  placeMarker(x, y, selectedColor);
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  if (selectedType === 'color') {
+    placeMarker(x - 18, y - 18, selectedColor);
+  } else if (selectedType === 'cross') {
+    placeCross(x - 16, y - 16);
+  } else if (selectedType === 'arrow') {
+    placeArrow(x - 30, y - 8);
+  }
 });
 
 function placeMarker(x, y, color) {
@@ -225,8 +241,6 @@ function placeMarker(x, y, color) {
   marker.innerHTML = `<div class="circle" style="background:${color}; color:${textColor}; text-shadow:${textShadow}">${markerCount}</div><div class="pname"></div>`;
   field.appendChild(marker);
   makeDraggable(marker);
-
-  // 右鍵設定球員名稱
   marker.addEventListener('contextmenu', (ev) => {
     ev.preventDefault();
     const current = marker.dataset.name || '';
@@ -239,20 +253,45 @@ function placeMarker(x, y, color) {
       pname.style.display = trimmed ? 'block' : 'none';
     }
   });
-
-  // 雙擊刪除
   marker.addEventListener('dblclick', (ev) => {
     ev.preventDefault();
     marker.remove();
   });
 }
 
+function placeCross(x, y) {
+  const item = document.createElement('div');
+  item.className = 'tool-item';
+  item.style.left = Math.max(0, x) + 'px';
+  item.style.top = Math.max(0, y) + 'px';
+  item.innerHTML = `<div style="width:32px;height:32px;color:#e74c3c;font-size:32px;font-weight:bold;line-height:1;text-shadow:1px 1px 2px #000;">✖</div>`;
+  field.appendChild(item);
+  makeDraggable(item);
+  item.addEventListener('dblclick', (ev) => {
+    ev.preventDefault();
+    item.remove();
+  });
+}
+
+function placeArrow(x, y) {
+  const item = document.createElement('div');
+  item.className = 'tool-item';
+  item.style.left = Math.max(0, x) + 'px';
+  item.style.top = Math.max(0, y) + 'px';
+  item.innerHTML = `<svg width="60" height="16" viewBox="0 0 60 16"><line x1="0" y1="8" x2="50" y2="8" stroke="#000" stroke-width="3"/><polygon points="50,2 60,8 50,14" fill="#000"/></svg>`;
+  field.appendChild(item);
+  makeDraggable(item);
+  item.addEventListener('dblclick', (ev) => {
+    ev.preventDefault();
+    item.remove();
+  });
+}
+
 function makeDraggable(el) {
   let isDragging = false;
   let offsetX = 0, offsetY = 0;
-
   el.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0) return; // 只處理左鍵
+    if (e.button !== 0) return;
     isDragging = true;
     const rect = el.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
@@ -261,18 +300,16 @@ function makeDraggable(el) {
     el.style.zIndex = 100;
     e.stopPropagation();
   });
-
   el.addEventListener('pointermove', (e) => {
     if (!isDragging) return;
     const fieldRect = field.getBoundingClientRect();
     let x = e.clientX - fieldRect.left - offsetX;
     let y = e.clientY - fieldRect.top - offsetY;
-    x = Math.max(0, Math.min(x, field.offsetWidth - 36));
-    y = Math.max(0, Math.min(y, field.offsetHeight - 36));
+    x = Math.max(0, Math.min(x, field.offsetWidth - 40));
+    y = Math.max(0, Math.min(y, field.offsetHeight - 40));
     el.style.left = x + 'px';
     el.style.top = y + 'px';
   });
-
   el.addEventListener('pointerup', (e) => {
     isDragging = false;
     try { el.releasePointerCapture(e.pointerId); } catch(err) {}
@@ -281,7 +318,7 @@ function makeDraggable(el) {
 }
 
 document.getElementById('clear').addEventListener('click', () => {
-  document.querySelectorAll('.marker').forEach(m => m.remove());
+  document.querySelectorAll('.marker, .tool-item').forEach(m => m.remove());
   markerCount = 0;
 });
 </script>
